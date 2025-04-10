@@ -8,6 +8,10 @@ screen = pygame.display.set_mode((800, 480))
 pygame.display.set_caption("Robot Face")
 clock = pygame.time.Clock()
 
+# Load logo image
+logo = pygame.image.load("42ad_logo_small.png").convert_alpha()
+logo_rect = logo.get_rect()
+
 # Colors
 GRAY = (180, 180, 180)
 DARK_GRAY = (100, 100, 100)
@@ -49,6 +53,11 @@ def draw_robot(smile=True, wink=False):
     # Cheeks
     pygame.draw.circle(screen, RED, (230, 290), 15)
     pygame.draw.circle(screen, RED, (570, 290), 15)
+
+	# Position logo in the bottom-right corner with 10px margin
+    logo_x = 800 - logo_rect.width - 10
+    logo_y = 480 - logo_rect.height - 10
+    screen.blit(logo, (logo_x, logo_y))
 
     pygame.display.flip()
 
