@@ -14,20 +14,36 @@ Follow these steps to get up and running:
    sudo apt install python3
    ```
 
-2. **Install Qt (PySide6)**
+2. **Create and Activate Python Virtual Environment**
    ```bash
-   pip install PySide6
+   # Create a new virtual environment
+   python3 -m venv venv
+
+   # Activate the virtual environment
+   source venv/bin/activate
+
+   # Your prompt should change to indicate you're in the virtual environment
+   # To deactivate the virtual environment when you're done:
+   # deactivate
    ```
 
-3. **Install Pygame**
+3. **Install Required Packages**
    ```bash
+   # Make sure your virtual environment is activated
+   pip install PySide6
    pip install pygame
    ```
 
 4. **Run the project**  
    Replace `<your_script.py>` with the name of your Python file:
    ```bash
-   python3 <your_script.py>
+   python3 robot_face_new.py
+   ```
+
+5. **Deactivate Python Virtual Enviroment**
+   When you are done  deactivate the virtual environment when you're done:
+   ```bash
+   deactivate
    ```
 
 ---
