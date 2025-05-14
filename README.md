@@ -41,6 +41,7 @@ Follow these steps to get up and running:
    ```
 
 5. **Deactivate Python Virtual Enviroment**
+
    When you are done  deactivate the virtual environment when you're done:
    ```bash
    deactivate
