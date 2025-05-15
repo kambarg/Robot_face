@@ -49,6 +49,23 @@ Follow these steps to get up and running:
    deactivate
    ```
 
+6. **Troubleshooting Video Camera**
+
+	Check that USB camera is recognized as device in the system: 
+	```bash
+	ls -l /dev/video* && v4l2-ctl --list-devices
+	```
+	Your camera should be listed as one of the registered devices 
+	/dev/video0, /dev/video1 etc. 
+
+	Than check that camera works:
+	```bash
+	ffplay /dev/video0
+	```
+	Verify the camera permisions:
+	```bash
+	groups $USER | grep video
+	```
 ---
 
 ## 🤖 Features

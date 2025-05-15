@@ -75,14 +75,23 @@ cap = init_camera()
 # Load face detection classifier
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-# Get display resolution
-info = pygame.display.Info()
-WIDTH, HEIGHT = info.current_w, info.current_h
+# Test mode: we are using fixed screen size 
+WIDTH, HEIGHT = 800, 480
 
-# Set full screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+# Set the screen
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Robot Face")
 clock = pygame.time.Clock()
+
+# Release mode: full screen
+	# Get display resolution 
+	# info = pygame.display.Info()
+	# WIDTH, HEIGHT = info.current_w, info.current_h
+
+	# Set full screen
+	# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+	# pygame.display.set_caption("Robot Face")
+	#clock = pygame.time.Clock()
 
 # Load and scale logo
 logo = pygame.image.load("42ad_logo_small.png").convert_alpha()
@@ -117,8 +126,8 @@ def draw_robot(smile=True, wink=False, face_x=None):
 
     # Adjust eye positions based on face position
     if face_x is not None:
-        # Calculate eye offset based on face position (max offset: 20% of eye width)
-        max_offset = left_eye.width * 0.2
+        # Calculate eye offset based on face position (max offset: 150% of eye width)
+        max_offset = left_eye.width * 1.5
         # Map face_x from 0-1 to -max_offset to max_offset
         offset = (face_x - 0.5) * 2 * max_offset
         left_eye.x += offset
