@@ -75,14 +75,23 @@ cap = init_camera()
 # Load face detection classifier
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-# Get display resolution
-info = pygame.display.Info()
-WIDTH, HEIGHT = info.current_w, info.current_h
+# Test mode: we are using fixed screen size 
+WIDTH, HEIGHT = 800, 480
 
-# Set full screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+# Set the screen
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Robot Face")
 clock = pygame.time.Clock()
+
+# Release mode: full screen
+	# Get display resolution 
+	# info = pygame.display.Info()
+	# WIDTH, HEIGHT = info.current_w, info.current_h
+
+	# Set full screen
+	# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+	# pygame.display.set_caption("Robot Face")
+	#clock = pygame.time.Clock()
 
 # Load and scale logo
 logo = pygame.image.load("42ad_logo_small.png").convert_alpha()
@@ -98,7 +107,7 @@ BLUE = (50, 100, 255)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
-def draw_robot(smile=True, wink=False, face_x=None):
+def draw_robot(smile=True, face_x=None):
     screen.fill((30, 30, 30))  # Background
 
     # Proportions based on screen size
@@ -117,24 +126,21 @@ def draw_robot(smile=True, wink=False, face_x=None):
 
     # Adjust eye positions based on face position
     if face_x is not None:
-        # Calculate eye offset based on face position (max offset: 20% of eye width)
-        max_offset = left_eye.width * 0.2
+        # Calculate eye offset based on face position (max offset: 150% of eye width)
+        max_offset = left_eye.width * 1.5
         # Map face_x from 0-1 to -max_offset to max_offset
         offset = (face_x - 0.5) * 2 * max_offset
         left_eye.x += offset
         right_eye.x += offset
 
-    if wink:
-        pygame.draw.line(screen, BLACK, (left_eye.centerx - WIDTH * 0.03, left_eye.centery),
-                         (left_eye.centerx + WIDTH * 0.03, left_eye.centery), 8)
-    else:
-        pygame.draw.ellipse(screen, WHITE, left_eye)
-        pygame.draw.ellipse(screen, BLACK, (
-            left_eye.x + left_eye.width * 0.33,
-            left_eye.y + left_eye.height * 0.3,
-            left_eye.width * 0.33,
-            left_eye.height * 0.4
-        ))
+    # Draw eyes
+    pygame.draw.ellipse(screen, WHITE, left_eye)
+    pygame.draw.ellipse(screen, BLACK, (
+        left_eye.x + left_eye.width * 0.33,
+        left_eye.y + left_eye.height * 0.3,
+        left_eye.width * 0.33,
+        left_eye.height * 0.4
+    ))
 
     pygame.draw.ellipse(screen, WHITE, right_eye)
     pygame.draw.ellipse(screen, BLACK, (
@@ -144,10 +150,18 @@ def draw_robot(smile=True, wink=False, face_x=None):
         right_eye.height * 0.4
     ))
 
-    # Smile
+    # Mouth
     if smile:
+        # Draw smiling mouth (arc)
         mouth_rect = pygame.Rect(WIDTH * 0.375, HEIGHT * 0.62, WIDTH * 0.25, HEIGHT * 0.15)
         pygame.draw.arc(screen, BLACK, mouth_rect, 3.14, 0, 6)
+    else:
+        # Draw straight line mouth
+        mouth_y = HEIGHT * 0.65
+        pygame.draw.line(screen, BLACK, 
+                        (WIDTH * 0.375, mouth_y),
+                        (WIDTH * 0.625, mouth_y), 
+                        6)
 
     # Cheeks
     pygame.draw.circle(screen, RED, (int(WIDTH * 0.275), int(HEIGHT * 0.67)), int(WIDTH * 0.02))
@@ -163,7 +177,6 @@ def draw_robot(smile=True, wink=False, face_x=None):
 
 # Run
 face_detected = False
-face_detected_time = 0
 running = True
 
 while running:
@@ -192,28 +205,15 @@ while running:
 
     # Process detected faces
     if current_face_detected:
-        if not face_detected:
-            face_detected = True
-            face_detected_time = time.time()
-        
         # Use the first detected face for eye tracking
         x, y, w, h = faces[0]
         # Calculate relative x position of face (0 to 1)
         current_face_x = (x + w/2) / frame.shape[1]
+        # Keep smiling while face is detected
+        draw_robot(smile=True, face_x=current_face_x)
     else:
-        face_detected = False
-
-    # Robot's reaction logic
-    if face_detected:
-        elapsed_since_detection = time.time() - face_detected_time
-        # Wink briefly when face is first detected
-        if elapsed_since_detection < 1.0:
-            draw_robot(smile=True, wink=True, face_x=current_face_x)
-        else:
-            draw_robot(smile=True, wink=False, face_x=current_face_x)
-    else:
-        # Default expression when no face is detected
-        draw_robot(smile=False, wink=False, face_x=None)
+        # Stop smiling when face is lost
+        draw_robot(smile=False, face_x=None)
 
 # Cleanup
 cap.release()
