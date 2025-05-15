@@ -75,23 +75,22 @@ cap = init_camera()
 # Load face detection classifier
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-# Test mode: we are using fixed screen size 
-WIDTH, HEIGHT = 800, 480
+# Create named window for camera feed
+cv2.namedWindow('Camera Feed', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Camera Feed', 640, 480)
 
-# Set the screen
+# Test mode: fixed size display
+WIDTH, HEIGHT = 800, 480
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Robot Face")
 clock = pygame.time.Clock()
 
-# Release mode: full screen
-	# Get display resolution 
-	# info = pygame.display.Info()
-	# WIDTH, HEIGHT = info.current_w, info.current_h
-
-	# Set full screen
-	# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
-	# pygame.display.set_caption("Robot Face")
-	#clock = pygame.time.Clock()
+# Release mode: full screen (commented for testing)
+# info = pygame.display.Info()
+# WIDTH, HEIGHT = info.current_w, info.current_h
+# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+# pygame.display.set_caption("Robot Face")
+# clock = pygame.time.Clock()
 
 # Load and scale logo
 logo = pygame.image.load("42ad_logo_small.png").convert_alpha()
@@ -203,7 +202,18 @@ while running:
     current_face_x = None
     current_face_detected = len(faces) > 0
 
-    # Process detected faces
+    # Draw rectangles around detected faces
+    for (x, y, w, h) in faces:
+        # Draw rectangle around face
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        # Add text label
+        cv2.putText(frame, 'Face', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
+
+    # Show camera feed
+    cv2.imshow('Camera Feed', frame)
+    cv2.waitKey(1)  # Required for CV window to update
+
+    # Process detected faces for robot animation
     if current_face_detected:
         # Use the first detected face for eye tracking
         x, y, w, h = faces[0]
@@ -217,5 +227,6 @@ while running:
 
 # Cleanup
 cap.release()
+cv2.destroyAllWindows()
 pygame.quit()
 sys.exit()
