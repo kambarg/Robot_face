@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import platform
 import os
+from ultralytics import YOLO
 
 # Init
 pygame.init()
@@ -72,8 +73,9 @@ def init_camera():
 # Initialize camera
 cap = init_camera()
 
-# Load face detection classifier
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+# Initialize YOLO model for face detection
+model = YOLO('yolov8n-face.pt')  # Using the face detection model
+print("YOLO model loaded successfully")
 
 # Create named window for camera feed
 cv2.namedWindow('Camera Feed', cv2.WINDOW_NORMAL)
@@ -192,33 +194,38 @@ while running:
     if not ret:
         continue
 
-    # Convert frame to grayscale for face detection
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    
-    # Detect faces
-    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+    # Detect faces using YOLO
+    results = model(frame, conf=0.5)  # conf is confidence threshold
     
     # Variables for robot's reaction
     current_face_x = None
-    current_face_detected = len(faces) > 0
+    current_face_detected = len(results[0].boxes) > 0
 
-    # Draw rectangles around detected faces
-    for (x, y, w, h) in faces:
-        # Draw rectangle around face
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-        # Add text label
-        cv2.putText(frame, 'Face', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
+    # Draw detection results
+    for result in results:
+        boxes = result.boxes.cpu().numpy()
+        for box in boxes:
+            # Get coordinates
+            x1, y1, x2, y2 = box.xyxy[0].astype(int)
+            confidence = box.conf[0]
+            
+            # Draw rectangle and confidence
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(frame, f'Face: {confidence:.2f}', 
+                       (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 
+                       0.9, (0, 255, 0), 2)
 
     # Show camera feed
     cv2.imshow('Camera Feed', frame)
-    cv2.waitKey(1)  # Required for CV window to update
+    cv2.waitKey(1)
 
     # Process detected faces for robot animation
     if current_face_detected:
         # Use the first detected face for eye tracking
-        x, y, w, h = faces[0]
-        # Calculate relative x position of face (0 to 1)
-        current_face_x = (x + w/2) / frame.shape[1]
+        box = results[0].boxes[0].cpu().numpy()
+        x1, y1, x2, y2 = box.xyxy[0].astype(int)
+        # Calculate center x position of face (0 to 1)
+        current_face_x = ((x1 + x2) / 2) / frame.shape[1]
         # Keep smiling while face is detected
         draw_robot(smile=True, face_x=current_face_x)
     else:
