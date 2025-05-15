@@ -75,13 +75,12 @@ cap = init_camera()
 # Load face detection classifier
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-# Create named window for camera feed
-cv2.namedWindow('Camera Feed', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Camera Feed', 640, 480)
+# Get display resolution
+info = pygame.display.Info()
+WIDTH, HEIGHT = info.current_w, info.current_h
 
-# Test mode: fixed size display
-WIDTH, HEIGHT = 800, 480
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# Set full screen
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Robot Face")
 clock = pygame.time.Clock()
 
@@ -91,6 +90,16 @@ clock = pygame.time.Clock()
 # screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 # pygame.display.set_caption("Robot Face")
 # clock = pygame.time.Clock()
+
+# Release mode: full screen
+	# Get display resolution 
+	# info = pygame.display.Info()
+	# WIDTH, HEIGHT = info.current_w, info.current_h
+
+	# Set full screen
+	# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+	# pygame.display.set_caption("Robot Face")
+	#clock = pygame.time.Clock()
 
 # Load and scale logo
 logo = pygame.image.load("42ad_logo_small.png").convert_alpha()
