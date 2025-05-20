@@ -1,0 +1,12 @@
+Opencv:
+$ pip install opencv-python
+
+Haar Cascades:
+built-in to opencv-python
+fast but not accurate
+
+YOLOv8 from Ultralytics:
+$ pip install ultralytics
+too slow (~1200 mc for inference), accuracy ok
+
+MediaPipe:

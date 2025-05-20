@@ -32,13 +32,15 @@ Follow these steps to get up and running:
 3. **Install Required Packages**
    ```bash
    # Make sure your virtual environment is activated
-   pip install PySide6
-   pip install pygame
-   pip install opencv-python
+   pip install PySide6 # ?
+   pip install pygame # library that is used to draw robot face
+   pip install opencv-python # to control usb camera and for haar cascades face detection method
+   pip install ultralytics # for yolo8 face detection method
    ```
 
 4. **Run the project**  
    ```bash
+   sudo usermod -a -G video $USER
    python3 robot_face_new.py
    ```
 
