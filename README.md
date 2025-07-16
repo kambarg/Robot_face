@@ -1,4 +1,4 @@
-# 🧭 Let's draw
+# 🧭 Let's get greetings from ML-dirven robot 
 
 This is a learning project focused on using the **Qt framework** and **Python** for creating 2D graphical applications.  
 It explores both **Qt (via PySide6)** and **Pygame** for building interactive visual experiences — such as robot faces with animated emotions 🤖.
